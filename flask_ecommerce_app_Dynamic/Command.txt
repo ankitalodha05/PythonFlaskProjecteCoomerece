@@ -1,3 +1,12 @@
 docker build -t flask-mysql-app .
 
-docker run -p 5000:5000 flask-mysql-app
+docker run -d --restart=always -p 5000:5000 flask-mysql-app
+
+docker build -t <your-dockerhub-username>/flask-app:latest .
+docker push <your-dockerhub-username>/flask-app:latest
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+
+kubectl get svc flask-service
