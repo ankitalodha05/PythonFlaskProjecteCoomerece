@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: flask-container
-          image: <your-dockerhub-username>/flask-app:latest  # Replace with your Docker image
+          image: 160885291806.dkr.ecr.ap-south-1.amazonaws.com/flask-ecommerce:latest  # ECR Image
           ports:
             - containerPort: 5000
           env:
