@@ -21,10 +21,10 @@ spec:
             - containerPort: 5000
           env:
             - name: DB_HOST
-              value: "database-1.cab2koygomrs.us-east-1.rds.amazonaws.com"
+              value: "database-1.c9gi28iw6c6y.ap-south-1.rds.amazonaws.com"
             - name: DB_USER
               value: "admin"
             - name: DB_PASSWORD
-              value: "ashraf123"
+              value: "adminadmin"
             - name: DB_NAME
               value: "my_product"
