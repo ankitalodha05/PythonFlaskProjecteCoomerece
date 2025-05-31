@@ -40,7 +40,7 @@
 On `slave2`:
 
 ```bash
-sudo yum update -y  # or apt update for Ubuntu
+sudo yum update -y  # or apt update for ec2-user
 sudo yum install docker -y
 sudo systemctl start docker
 sudo systemctl enable docker
