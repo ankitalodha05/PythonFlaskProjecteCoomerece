@@ -1,0 +1,62 @@
+pipeline {
+    agent none
+
+    environment {
+        ECR_URI = '160885291806.dkr.ecr.ap-south-1.amazonaws.com/flask-ecommerce'
+        IMAGE_TAG = 'latest'
+        CLUSTER_NAME = 'naresh'
+        REGION = 'ap-south-1'
+    }
+
+    stages {
+        stage('Git Clone') {
+            agent { label 'slave2' }
+            steps {
+                dir('flask_ecommerce_app_Dynamic') {
+                    git branch: 'main', url: 'https://github.com/ankitalodha05/PythonFlaskProjecteCoomerece.git'
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+            agent { label 'slave2' }
+            steps {
+                dir('flask_ecommerce_app_Dynamic/flask_ecommerce_app_Dynamic') {
+                    script {
+                        sh '''
+                            echo "Login to ECR..."
+                            aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
+
+                            echo "Build Docker image..."
+                            docker build -t flask-ecommerce .
+
+                            echo "Tag image for ECR..."
+                            docker tag flask-ecommerce:$IMAGE_TAG $ECR_URI:$IMAGE_TAG
+
+                            echo "Push image to ECR..."
+                            docker push $ECR_URI:$IMAGE_TAG
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            agent { label 'slave2' }
+            steps {
+                dir('flask_ecommerce_app_Dynamic/flask_ecommerce_app_Dynamic') { // Assuming your YAMLs are here
+                    script {
+                        sh '''
+                            echo "Update kubeconfig for EKS..."
+                            aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION
+
+                            echo "Deploying to EKS..."
+                            kubectl apply -f deployment.yaml
+                            kubectl apply -f service.yaml
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
